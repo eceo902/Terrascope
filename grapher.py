@@ -4,7 +4,10 @@ import numpy as np
 import math
 
 data = pd.read_excel(r'data.xlsx', sheet_name=1, header=2)
-palmData = data.iloc[1168:1203, 1:487]
+oilData = data.iloc[1166:1187, 1:487]
+fruitData = data.iloc[1188:1203, 1:487]
+palmData = fruitData
+
 
 landUseData = palmData.iloc[:, 43]
 greenhouseGasData = palmData.iloc[:, 64]
@@ -15,7 +18,7 @@ waterScData = palmData.iloc[:, 124]
 productionData = palmData.iloc[:, 396]
 
 
-combinedData = palmData.iloc[:, [43, 396]]  # , 64]]
+combinedData = palmData.iloc[:, [396, 43]]  # , 64]]
 
 
 
@@ -35,12 +38,19 @@ def removeNaN(li: list):
             i += 1
     return li
 
+prodlist = productionData.tolist()
+# del(prodlist[24])
+# del(prodlist[27])
+landlist = landUseData.tolist()
+# del(landlist[24])
+# del(landlist[27])
 
-x = np.array(removeNaN(landUseData.tolist()))
-y = np.array(removeNaN(greenhouseGasData.tolist()))
-rtn = np.polyfit(x, y, 1)
-m = rtn[0]
-b = rtn[1]
+print(prodlist)
+print(landlist)
+
+x = np.array(removeNaN(prodlist))
+y = np.array(removeNaN(landlist))
+m, b = np.polyfit(x, y, 1)
 
 combinedData = combinedData.apply(removeDashes, axis=1)
 combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
