@@ -2,11 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import seaborn as sns
 
 data = pd.read_excel(r'data.xlsx', sheet_name=1, header=2)
-oilData = data.iloc[1166:1187, 1:487]
+oilData = data.iloc[1166:1188, 1:487]
 fruitData = data.iloc[1188:1203, 1:487]
-palmData = fruitData
+palmData = pd.DataFrame.append(oilData, fruitData)
 
 
 landUseData = palmData.iloc[:, 43]
@@ -39,11 +40,8 @@ def removeNaN(li: list):
     return li
 
 prodlist = productionData.tolist()
-# del(prodlist[24])
-# del(prodlist[27])
 landlist = landUseData.tolist()
-# del(landlist[24])
-# del(landlist[27])
+
 
 print(prodlist)
 print(landlist)
@@ -54,5 +52,5 @@ m, b = np.polyfit(x, y, 1)
 
 combinedData = combinedData.apply(removeDashes, axis=1)
 combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
-# plt.plot(x, m*x + b)
+plt.plot(x, m*x + b)
 plt.show()
