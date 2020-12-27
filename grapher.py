@@ -19,38 +19,45 @@ waterScData = palmData.iloc[:, 124]
 productionData = palmData.iloc[:, 396]
 
 
-combinedData = palmData.iloc[:, [396, 43]]  # , 64]]
+combinedData = palmData.iloc[:, [43, 124]]  # , 64]]
 
 
 
 def removeDashes(row):
-    if row.iloc[0] == '-' or row.iloc[1] == '-':  # or row.iloc[2] == '-':
+    if row.iloc[0] == "-" or row.iloc[1] == "-":  # or row.iloc[2] == '-':
         row.iloc[0] = float("NaN")
         row.iloc[1] = float("NaN")
         # row.iloc[2] = 0
     return row
 
-def removeNaN(li: list):
+def removeNaN(li: list, other_li: list):
     i = 0
     while(i < len(li)):
-        if math.isnan(li[i]):
+        try:
+            if math.isnan(li[i]) or li[i] == "-" or math.isnan(other_li[i]) or other_li[i] == "-":
+                del(li[i])
+                del(other_li[i])
+                i -= 1
+        except TypeError:
             del(li[i])
-        else:
+            del(other_li[i])
+            i -= 1
+        finally:
             i += 1
-    return li
 
-prodlist = productionData.tolist()
-landlist = landUseData.tolist()
+xlist = landUseData.tolist()
+ylist = waterScData.tolist()
 
+removeNaN(xlist, ylist)
 
-print(prodlist)
-print(landlist)
-
-x = np.array(removeNaN(prodlist))
-y = np.array(removeNaN(landlist))
+x = np.array(xlist)
+y = np.array(ylist)
 m, b = np.polyfit(x, y, 1)
 
 combinedData = combinedData.apply(removeDashes, axis=1)
 combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
+plt.show()
+combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
 plt.plot(x, m*x + b)
 plt.show()
+
