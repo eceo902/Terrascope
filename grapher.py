@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-import seaborn as sns
 
 data = pd.read_excel(r'data.xlsx', sheet_name=1, header=2)
 oilData = data.iloc[1166:1188, 1:487]
@@ -14,12 +13,12 @@ landUseData = palmData.iloc[:, 43]
 greenhouseGasData = palmData.iloc[:, 64]
 acidData = palmData.iloc[:, 97]
 eutrData = palmData.iloc[:, 107]
-waterWithdrawData = palmData.iloc[:, 117]
-waterScData = palmData.iloc[:, 124]
+# waterWithdrawData = palmData.iloc[:, 117]
+# waterScData = palmData.iloc[:, 124]
 productionData = palmData.iloc[:, 396]
 
 
-combinedData = palmData.iloc[:, [43, 124]]  # , 64]]
+combinedData = palmData.iloc[:, [64, 43]]  # , 64]]
 
 
 
@@ -45,8 +44,9 @@ def removeNaN(li: list, other_li: list):
         finally:
             i += 1
 
-xlist = landUseData.tolist()
-ylist = waterScData.tolist()
+
+xlist = greenhouseGasData.tolist()
+ylist = landUseData.tolist()
 
 removeNaN(xlist, ylist)
 
@@ -54,10 +54,15 @@ x = np.array(xlist)
 y = np.array(ylist)
 m, b = np.polyfit(x, y, 1)
 
+correlation_matrix = np.corrcoef(xlist, ylist)
+correlation_xy = correlation_matrix[0, 1]
+r_squared = round(correlation_xy**2, 10)
+
 combinedData = combinedData.apply(removeDashes, axis=1)
 combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
 plt.show()
 combinedData.plot.scatter(x=0, y=1)  # , c=2, colormap='Blues')
 plt.plot(x, m*x + b)
+plt.text(min(xlist), max(ylist)*0.9, s=f"R$^2$ = {r_squared}")
 plt.show()
 
